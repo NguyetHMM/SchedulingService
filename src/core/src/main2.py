@@ -1,6 +1,5 @@
 import json
 
-from matplotlib.font_manager import json_dump
 from src.core.src.input_data_validation import validate_input_data
 from src.core.src.models import *
 from src.core.src.common import *
@@ -36,6 +35,8 @@ def add_fixed_time_working_time_slots(schedule: Schedule, jobs: List[Job]):
 
 
 def filter_list_time_slots(time_slots: List[TimeSlot], min_distance=MIN_DISTANCE):
+    for x in time_slots:
+        print(type(x), x)
     time_slots.sort(key=lambda x: x.start_time)
     filter_time_slots = [time_slots[0]]
     for i in range(1, len(time_slots)):
@@ -248,9 +249,15 @@ if __name__ == '__main__':
 
             child_on_crossover_1 = Individual(flextime_jobs=flextime_jobs_1, schedule=Schedule(start_time=new_generation[0].schedule.start_time, end_time=new_generation[0].schedule.end_time))
             child_on_crossover_2 = Individual(flextime_jobs=flextime_jobs_2, schedule=Schedule(start_time=new_generation[0].schedule.start_time, end_time=new_generation[0].schedule.end_time))
+            
+            _, added_working_time_slots_on_crossover_1 = set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
+            child_on_crossover_1.schedule.time_slots += added_working_time_slots_on_crossover_1
 
-            child_on_crossover_1.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
-            child_on_crossover_2.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
+            _, added_working_time_slots_on_crossover_2 = set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
+            child_on_crossover_1.schedule.time_slots += added_working_time_slots_on_crossover_2
+            
+            # child_on_crossover_1.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
+            # child_on_crossover_2.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
 
             new_generation.append(child_on_crossover_1)
 
@@ -260,7 +267,9 @@ if __name__ == '__main__':
             # print(flextime_jobs_mutation, "flextime_jobs_mutation")
 
             child_on_mutation = Individual(flextime_jobs=flextime_jobs_mutation, schedule=Schedule(start_time=new_generation[0].schedule.start_time, end_time=new_generation[0].schedule.end_time))
-            child_on_mutation.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_mutation, timeline=copy.deepcopy(timeline))
+            _, added_working_time_slots_on_mutation = set_individual_schedule(flextime_jobs=flextime_jobs_mutation, timeline=copy.deepcopy(timeline))
+            child_on_mutation.schedule.time_slots += added_working_time_slots_on_mutation
+            # child_on_mutation.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_mutation, timeline=copy.deepcopy(timeline))
             new_generation.append(child_on_mutation)
             population.append(new_generation)
             for individual in new_generation:   

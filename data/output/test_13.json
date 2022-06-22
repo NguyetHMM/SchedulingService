@@ -63,16 +63,16 @@
             "name": "Họp ITSS",
             "early_start_time": "2021-11-15 21:00:00",
             "late_finish_time": "2021-11-15 23:00:00",
-            "estimated_time": "120",
-            "flextime": "0"
+            "estimated_time": 120,
+            "flextime": 0
         },
         {
             "id": "9",
             "name": "Báo cáo GR",
             "early_start_time": "2021-11-17 20:30:00",
             "late_finish_time": "2021-11-17 23:00:00",
-            "estimated_time": "150",
-            "flextime": "0"
+            "estimated_time": 150,
+            "flextime": 0
         },
         {
             "id": "10",
@@ -172,21 +172,6 @@
             "id": "13",
             "start_time": "2021-11-18 17:00:00",
             "end_time": "2021-11-18 18:00:00"
-        },
-        {
-            "id": "14",
-            "start_time": "2021-11-18 20:00:00",
-            "end_time": "2021-11-18 21:00:00"
-        },
-        {
-            "id": "15",
-            "start_time": "2021-11-18 23:00:00",
-            "end_time": "2021-11-19 08:00:00"
-        },
-        {
-            "id": "16",
-            "start_time": "2021-11-19 12:00:00",
-            "end_time": "2021-11-19 13:00:00"
         }
     ],
     "scheduled_working_time_slots": [
