@@ -25,6 +25,8 @@ def validate_input_data(schedule: Schedule, jobs: List[Job], schedule_breaking_t
     for jt in fixed_time_job_time_slots:
         for bt in schedule_breaking_time_slots:
             if not time_slot_unique(jt, bt):
+                print(jt.__dict__)
+                print(bt.__dict__)
                 print('Rang buoc 8')
                 return {
                     'status': False,

@@ -6,8 +6,7 @@ from src.core.src.common import *
 from src.core.src.genetic import *
 from typing import List
 import pandas as pd
-from bson.json_util import dumps
-
+# from bson.json_util import dumps
 
 def schedule_generate(start_time, end_time):
     schedule = Schedule(start_time=start_time, end_time=end_time)
@@ -178,7 +177,7 @@ if __name__ == '__main__':
     jobs = []
     working_time_slots = [] #query
     all_jobs= [] #query
-    recent_working_time_slots = [] 
+    recent_working_time_slots = []
 
     temp_breaking = pd.read_excel(r'./data/breakTime.xlsx').to_dict('records')
     temp_jobs = pd.read_excel(r'./data/jobs.xlsx').to_dict('records')
@@ -191,7 +190,7 @@ if __name__ == '__main__':
         breaking.append(b)
         print(b.__dict__)
     # print(dumps(breaking))
-  
+
     for job in temp_jobs:
         j = Job(id=job['id'], name=job['name'], early_start_time=job['early_start_time'], late_finish_time=job['late_finish_time'],
                 start_time=None, finish_time=None, estimated_time=job['estimated_time'], flextime=job['flextime'])
@@ -212,12 +211,12 @@ if __name__ == '__main__':
                              end_time=t['end_time'], job=j[0], remaining_time=t['remaining_time'])
         recent_working_time_slots.append(ts)
         print(ts.__dict__)
-    
-    
+
+
     # with open('myfile.json', 'w', encoding ='utf8') as json_file:
     #     json.dump({'mix': recent_working_time_slots}, json_file)
     # print(dumps(recent_working_time_slots))
-    
+
 
     schedule = add_breaking_time_slots(schedule, breaking)
     schedule = add_fixed_time_working_time_slots(schedule, jobs)
@@ -234,7 +233,7 @@ if __name__ == '__main__':
         done = False
         for individual in population[generation]:
             individual.lateness = fitness_func(individual=individual)
-            if individual.lateness == 0: 
+            if individual.lateness == 0:
                 print ('acceptable individual', individual.__dict__)
                 done = True
 
@@ -249,13 +248,13 @@ if __name__ == '__main__':
 
             child_on_crossover_1 = Individual(flextime_jobs=flextime_jobs_1, schedule=Schedule(start_time=new_generation[0].schedule.start_time, end_time=new_generation[0].schedule.end_time))
             child_on_crossover_2 = Individual(flextime_jobs=flextime_jobs_2, schedule=Schedule(start_time=new_generation[0].schedule.start_time, end_time=new_generation[0].schedule.end_time))
-            
+
             _, added_working_time_slots_on_crossover_1 = set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
             child_on_crossover_1.schedule.time_slots += added_working_time_slots_on_crossover_1
 
             _, added_working_time_slots_on_crossover_2 = set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
             child_on_crossover_1.schedule.time_slots += added_working_time_slots_on_crossover_2
-            
+
             # child_on_crossover_1.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
             # child_on_crossover_2.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
 
@@ -272,23 +271,23 @@ if __name__ == '__main__':
             # child_on_mutation.schedule.time_slots = set_individual_schedule(flextime_jobs=flextime_jobs_mutation, timeline=copy.deepcopy(timeline))
             new_generation.append(child_on_mutation)
             population.append(new_generation)
-            for individual in new_generation:   
+            for individual in new_generation:
                 individual.lateness = fitness_func(individual=individual)
-                if individual.lateness == 0: 
+                if individual.lateness == 0:
                     print ('acceptable individual', individual.__dict__)
                     done = True
             # print(new_generation, "new_generation")
             population.append(new_generation)
-            
+
             generation += 1
-    
+
         total_len = 0
         for p in population:
             total_len+=len(p)
         print(total_len)
-  
 
-    
+
+
 
     end = time.time()
     print(end-start, "run time")

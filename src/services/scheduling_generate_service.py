@@ -57,11 +57,14 @@ class SchedulingGenerateService:
             done = False
             for individual in population[generation]:
                 individual.lateness = fitness_func(individual=individual)
+                print(individual.lateness, len(individual.schedule.time_slots), "lateness")
+
                 if individual.lateness == 0 and len(individual.schedule.time_slots) != 0:
                     acceptable_individual = individual
                     done = True
 
             while not done:
+                print(generation, "generation")
                 new_generation = on_selection(population=population[generation])
                 print(new_generation, "new_generation")
                 flextime_jobs_1 = []
@@ -79,7 +82,10 @@ class SchedulingGenerateService:
                 child_on_crossover_2 = Individual(flextime_jobs=flextime_jobs_2,
                                                   schedule=Schedule(start_time=new_generation[0].schedule.start_time,
                                                                     end_time=new_generation[0].schedule.end_time))
-
+                print(child_job_ids_on_crossover_1, 'child_job_ids_on_crossover_1')
+                       # print(child_on_crossover_1.schedule.lateness)
+                print(child_job_ids_on_crossover_2, 'child_job_ids_on_crossover_2')
+                # print(child_on_crossover_2.schedule.lateness)
                 # child_on_crossover_1.schedule.time_slots += set_individual_schedule(flextime_jobs=flextime_jobs_1, timeline=copy.deepcopy(timeline))
 
                 # child_on_crossover_2.schedule.time_slots += set_individual_schedule(flextime_jobs=flextime_jobs_2, timeline=copy.deepcopy(timeline))
@@ -110,6 +116,7 @@ class SchedulingGenerateService:
 
                 for individual in new_generation:
                     individual.lateness = fitness_func(individual=individual)
+                    print(individual.lateness,len(individual.schedule.time_slots),"lateness")
                     if individual.lateness == 0 and len(individual.schedule.time_slots) != 0:
                         acceptable_individual = individual
                         done = True
@@ -122,29 +129,28 @@ class SchedulingGenerateService:
             res = jsonify({
                 'message': validated['message']
             })
-            res.status_code = 422
+            # res.status_code = 422
 
         if (acceptable_individual):
             acceptable_individual.schedule.time_slots.sort(key=lambda x: x.start_time)
-            res = jsonify({
+            res = {
                 'result': acceptable_individual.schedule.serialize()['time_slots']
-            })
-            res.status_code = 200
+            }
+            # res.status_code = 200
         run_time_end = time.time()
         result_to_file = {
-            'Ngày': datetime.now().date,
-            'Tổng số công việc': len(jobs),
-            'Số công việc không cố định': len(jobs),
-            'Số công việc kế thừa thời gian từ lịch trình quá khứ': len(jobs),
-            'Thời gian lập lịch': (end_time - start_time).days,
-            'Số lượng cá thể khởi tạo': total_len,
-            'Số lượng cá thể trong quần thể': total_len,
-            'Thời gian chạy': run_time_end - run_time_start
+            'Jobs': len(jobs),
+            'Flextime': len(acceptable_individual.flextime_jobs),
+            'Scheduled Days': (end_time - start_time).days,
+            'Individual On Generate': total_len,
+            'Total Individual': total_len,
+            'Run Time': run_time_end - run_time_start
         }
 
-        # import json
-        # with open(f'data/output/output.json', 'a') as f:
-        #     f.write(f'\n{json.dumps(result_to_file)},')
+        import json
+        with open(f'data/output/output.json', 'a') as f:
+            f.write(f'\n{json.dumps(result_to_file)},')
+
         # from openpyxl import load_workbook
         # myFileName=r'data/output/output.xlsx'
         # load the workbook, and put the sheet into a variable

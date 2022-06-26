@@ -7,14 +7,14 @@ import copy
 import time
 from datetime import datetime, date, timedelta
 
-LATENESS_MAX = math.inf
+LATENESS_MAX: float = math.inf
 
 
 def on_generation(schedule: Schedule, timeline: List[TimeSlot], start_time_reused_jobs: List[Job], jobs: List[Job]):
     print("ongeneration")
     flextime_jobs = [job for job in jobs if (job.flextime == 1 and job not in start_time_reused_jobs)]
     population = []
-    num_individual = 3
+    num_individual = 10
     for i in range(num_individual):
         # print("______________________________")
         # print("individual", i)
@@ -128,10 +128,14 @@ def on_crossover(individual1: Individual, individual2: Individual):
     temp_child_2_flextime_job_ids = []
     child_1_flextime_job_ids = []
     child_2_flextime_job_ids = []
+
+    # min_cross = len(flextime_job_ids)//2
     while (temp_child_1_flextime_job_ids == temp_child_2_flextime_job_ids):
         temp_child_1_flextime_job_ids = []
         temp_child_2_flextime_job_ids = []
-        x = random.randint(2, (len(flextime_job_ids) - 1))
+
+        # x = random.randint(min_cross, (len(flextime_job_ids) - 1))
+        x = len(flextime_job_ids)//2
         crossover_gens = random.sample(parents_1, x)
         for id in parents_1:
             if id in crossover_gens:
