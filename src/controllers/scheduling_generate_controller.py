@@ -1,3 +1,4 @@
+from pkg_resources import require
 from flask_restful import Resource
 from flask import jsonify
 from flask_restful import reqparse
@@ -5,12 +6,11 @@ import json
 # from bson.json_util import dumps
 from src.services.scheduling_generate_service import SchedulingGenerateService
 from src.core.src.main2 import *
-from task.workers import add_schedule, scheduling_worker
+# from task.workers import add_schedule, scheduling_worker
 
 class SchedulingGenerate(Resource):
     def get(self):
-        task = add_schedule.delay()
-        return task.id
+        return 1
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -21,11 +21,11 @@ class SchedulingGenerate(Resource):
         parser.add_argument('breaking_time_slots', type=dict, action="append")
         args = parser.parse_args()
 
-        task = scheduling_worker.apply_async((args,))
+        if not args.scheduled_working_time_slots:
+            args.scheduled_working_time_slots = []
 
-        # return {
-        #     'task_id': task.id
-        # }
+        # task = scheduling_worker.apply_async((args,))
+
         scheduling_generate_service = SchedulingGenerateService()
 
         return scheduling_generate_service.scheduling_generate(schedule_start_time=args.schedule_start_time,
@@ -33,3 +33,5 @@ class SchedulingGenerate(Resource):
                                                                breaking_time_slots=args.breaking_time_slots,
                                                                jobs=args.jobs,
                                                                scheduled_working_time_slots=args.scheduled_working_time_slots)
+# args.scheduled_working_time_slots
+

@@ -8,12 +8,23 @@ from typing import List
 import pandas as pd
 # from bson.json_util import dumps
 
+
+
 def schedule_generate(start_time, end_time):
     schedule = Schedule(start_time=start_time, end_time=end_time)
     return schedule
 
 
 def add_breaking_time_slots(schedule: Schedule, time_slots: List[BreakingTimeSlot]):
+    """_summary_
+
+    Args:
+        schedule (Schedule): _description_
+        time_slots (List[BreakingTimeSlot]): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # print('add_breaking_time_slots')
     start_time_slot = TimeSlot(id=generate_uuid(), start_time=schedule.start_time, end_time=schedule.start_time)
     end_time_slot = TimeSlot(id=generate_uuid(), start_time=schedule.end_time, end_time=schedule.end_time)
